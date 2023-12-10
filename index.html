@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Name Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #343541;
+            color: #fff;
+        }
+
+        h1, h2 {
+            color: #00b894;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ffffff;
+        }
+
+        select, input {
+            margin-bottom: 10px;
+            background-color: #2d2f30;
+            color: #858585;
+            border: 0px solid #ffffff;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        #overworldAreaInput {
+            display: none;
+        }
+
+        #generatedName {
+            font-weight: bold;
+            color: #00b894;
+        }
+
+        #copyButton {
+            display: none;
+            margin-top: 10px;
+            padding: 5px;
+            cursor: pointer;
+            background-color: #55efc4;
+            color: #2d2f30;
+            border: none;
+            border-radius: 5px;
+        }
+
+        #copyButton:hover {
+            background-color: #00b894;
+        }
+
+        button {
+            background-color: #55efc4;
+            color: #2d2f30;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #00b894;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Asset Name Generator</h1>
+
+    <label for="assetType">Select Asset Type:</label>
+    <select id="assetType">
+        <option value="spr">Sprite (spr)</option>
+        <option value="obj">Object (obj)</option>
+    </select>
+
+    <label for="category">Select Category:</label>
+    <select id="category" onchange="updateSubcategories()">
+        <option value="battle">Battle</option>
+        <option value="overworld">Overworld</option>
+        <option value="inventory">Inventory</option>
+        <option value="misc">Misc</option>
+    </select>
+
+    <label for="subcategory">Select Subcategory:</label>
+    <select id="subcategory"></select>
+
+    <div id="overworldAreaInput">
+        <label for="area">Enter Area:</label>
+        <input type="text" id="area" placeholder="Enter area">
+    </div>
+
+    <label for="prefix">Prefix:</label>
+    <input type="text" id="prefix" placeholder="Enter prefix">
+
+    <label for="suffix">Suffix:</label>
+    <input type="text" id="suffix" placeholder="Enter suffix">
+    <br><br>
+    <button onclick="generateName()">Generate Name</button>
+
+    <h2>Generated Name:</h2>
+    <p id="generatedName"></p>
+
+    <button id="copyButton" onclick="copyToClipboard()">Copy to Clipboard</button>
+
+    <script>
+        // Sample subcategories for each category
+        const subcategories = {
+            battle: ["Enemy", "Bullet", "Effect", "Turn"],
+            overworld: ["Background", "Nothing"],
+            inventory: ["Item", "Armor", "Weapon", "Spell"],
+            misc: []
+        };
+
+        function updateSubcategories() {
+            var category = document.getElementById("category").value;
+            var subcategoryDropdown = document.getElementById("subcategory");
+            var overworldAreaInput = document.getElementById("overworldAreaInput");
+
+            subcategoryDropdown.innerHTML = ""; // Clear previous options
+            overworldAreaInput.style.display = "none"; // Hide the overworld area input field by default
+
+            // Populate subcategories based on the selected category
+            subcategories[category].forEach(function(subcategory) {
+                var option = document.createElement("option");
+                option.value = subcategory;
+                option.text = subcategory;
+                subcategoryDropdown.add(option);
+            });
+
+            // Show the overworld area input field if "Overworld" is selected
+            if (category === "overworld") {
+                overworldAreaInput.style.display = "block";
+            }
+        }
+
+        function generateName() {
+            var assetType = document.getElementById("assetType").value;
+            var category = document.getElementById("category").value;
+            var subcategory = document.getElementById("subcategory").value;
+            var prefix = document.getElementById("prefix").value;
+            var suffix = document.getElementById("suffix").value;
+            var area = document.getElementById("area").value;
+            
+            var generatedName = (assetType=="obj" ? "" : assetType+"_") + prefix.toLowerCase() +"_" + category + (subcategory.toLowerCase()!="nothing" ? "_" + subcategory.toLowerCase() : "") +
+                                (area ? "_" + area.toLowerCase() : "") + "_" + suffix.toLowerCase();
+
+            document.getElementById("generatedName").textContent = generatedName;
+
+            // Show the copy button after generating a name
+            document.getElementById("copyButton").style.display = "inline-block";
+        }
+
+        function copyToClipboard() {
+            var generatedName = document.getElementById("generatedName").textContent;
+            var textarea = document.createElement("textarea");
+            textarea.value = generatedName;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+        }
+
+        // Initial update of subcategories
+        updateSubcategories();
+    </script>
+
+</body>
+</html>
